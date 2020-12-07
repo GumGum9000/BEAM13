@@ -25,18 +25,19 @@ struct RGB
 
 struct RGB leds[NUMLeds];
 
+
 void LEDBit(bool Bit)
 {
     if (Bit)
     {
-        PORTB &= ~(1 << LEDPin); // set LEDPin high
+        PORTB |= (1 << LEDPin); // set LEDPin high
         _delay_us(T1H);
         PORTB &= ~(1 << LEDPin); //set LEDPin low
         _delay_us(T1L);
     }
     else
     {
-        PORTB &= ~(1 << LEDPin); // set LEDPin high
+        PORTB |= (1 << LEDPin); // set LEDPin high
         _delay_us(T0H);
         PORTB &= ~(1 << LEDPin); //set LEDPin low
         _delay_us(T0L);
@@ -68,14 +69,21 @@ void setValue(uint8_t r, uint8_t g, uint8_t b, int pos)
     leds[pos].blue = b;
 }
 
-int main(void)
+int main()
 {
     DDRB |= (1 << LEDPin); // Set LEDPin as output
+    /*
     setValue(255, 0, 0, 1);
     setValue(0, 255, 0, 2);
     setValue(0, 0, 255, 3);
     setValue(255, 255, 255, 4);
 
     drawLEDs();
-    _delay_ms(500);
+    */
+    while (1)
+    {
+        PORTB |= (1 << LEDPin); //PB0 im PORTB setzen
+        _delay_(1000);
+    }
+    return 0;
 }
