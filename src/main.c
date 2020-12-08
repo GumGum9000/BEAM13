@@ -1,4 +1,4 @@
-#define F_CPU 8000000UL
+#define F_CPU 19200000UL
 
 #include <avr/io.h>
 #include <util/delay.h>
@@ -16,31 +16,30 @@
 #define LEDPin PB0
 #define NUMLeds 4
 
-struct RGB
+typedef struct
 {
     uint8_t red;
     uint8_t green;
     uint8_t blue;
-};
+} RGB;
 
-struct RGB leds[NUMLeds];
-
+RGB leds[NUMLeds];
 
 void LEDBit(bool Bit)
 {
     if (Bit)
     {
         PORTB |= (1 << LEDPin); // set LEDPin high
-        _delay_us(T1H);
+        _delay_us(T1H / 4);
         PORTB &= ~(1 << LEDPin); //set LEDPin low
-        _delay_us(T1L);
+        //_delay_us(T1L);
     }
     else
     {
         PORTB |= (1 << LEDPin); // set LEDPin high
-        _delay_us(T0H);
+        _delay_us(T0H / 4);
         PORTB &= ~(1 << LEDPin); //set LEDPin low
-        _delay_us(T0L);
+        //_delay_us(T0L);
     }
 }
 
@@ -50,15 +49,37 @@ void drawLEDs()
     {
         for (int8_t i = 7; i >= 0; i--)
         {
-            LEDBit(bit_is_set(leds[j].green, i));
+            // LEDBit(leds[j].green & i)
+            if (leds[j].green & 1 << i)
+            {
+                LEDBit(1);
+            }
+            else
+            {
+                LEDBit(0);
+            }
         }
         for (int8_t i = 7; i >= 0; i--)
         {
-            LEDBit(bit_is_set(leds[j].red, i));
+            if (leds[j].red & 1 << i)
+            {
+                LEDBit(1);
+            }
+            else
+            {
+                LEDBit(0);
+            }
         }
         for (int8_t i = 7; i >= 0; i--)
         {
-            LEDBit(bit_is_set(leds[j].blue, i));
+            if (leds[j].blue & 1 << i)
+            {
+                LEDBit(1);
+            }
+            else
+            {
+                LEDBit(0);
+            }
         }
     }
 }
@@ -72,18 +93,15 @@ void setValue(uint8_t r, uint8_t g, uint8_t b, int pos)
 int main()
 {
     DDRB |= (1 << LEDPin); // Set LEDPin as output
-    /*
-    setValue(255, 0, 0, 1);
-    setValue(0, 255, 0, 2);
-    setValue(0, 0, 255, 3);
-    setValue(255, 255, 255, 4);
-
-    drawLEDs();
-    */
+    _delay_ms(5);
     while (1)
     {
-        PORTB |= (1 << LEDPin); //PB0 im PORTB setzen
-        _delay_(1000);
+        setValue(rand() % 100, 0, 0, 0);
+        setValue(0, rand() % 100, 0, 1);
+        setValue(0, 0, rand() % 100, 2);
+        setValue(rand() % 100, rand() % 100, rand() % 100, 3);
+        drawLEDs();
+        _delay_ms(100);
     }
     return 0;
 }
