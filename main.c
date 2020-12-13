@@ -98,7 +98,7 @@ void setValueRGB(RGB RGBVal, int pos)
     leds[pos].blue = RGBVal.b;
 }
 
-RGB hsv2rgb(uint8_t hue, uint8_t sat, uint8_t val)
+RGB hsv2rgb(uint8_t hue, uint8_t sat, uint8_t val) //NOT 0-255!!!
 {
     double      hh, p, q, t, ff;
     long        i;
@@ -156,6 +156,12 @@ RGB hsv2rgb(uint8_t hue, uint8_t sat, uint8_t val)
     return out;     
 }
 
+void LEDsOff(){
+    for (int i=0;i<NUMLeds;i++){
+       setValue(0, 0, 0, i); 
+    }
+}
+
 int main()
 {
     DDRB |= (1 << LEDPin); // Set LEDPin as output
@@ -170,4 +176,22 @@ int main()
         _delay_ms(100);
     }
     return 0;
+}
+
+void Block(uint8_t i){
+    uint8_t hue;
+    if(i==1){
+        LEDsOff();
+        setValueRGB(hsv2rgb(hue,255,255),i);
+        setValueRGB(hsv2rgb(hue,255,125),i+1);
+    }else if(i==NUMLeds){
+        LEDsOff();
+         setValueRGB(hsv2rgb(hue,255,255),i);
+        setValueRGB(hsv2rgb(hue,255,125),i-1);
+    }else{
+        LEDsOff();
+        setValueRGB(hsv2rgb(hue,255,125),i-1);
+        setValueRGB(hsv2rgb(hue,255,255),i);
+        setValueRGB(hsv2rgb(hue,255,125),i+1);
+    }
 }
