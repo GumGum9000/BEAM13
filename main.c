@@ -18,9 +18,9 @@
 
 typedef struct
 {
-    uint8_t red;
-    uint8_t green;
-    uint8_t blue;
+    uint8_t red,r;
+    uint8_t green,g;
+    uint8_t blue,b;
 } RGB;
 
 RGB leds[NUMLeds];
@@ -83,11 +83,77 @@ void drawLEDs()
         }
     }
 }
+
 void setValue(uint8_t r, uint8_t g, uint8_t b, int pos)
 {
     leds[pos].red = r;
     leds[pos].green = g;
     leds[pos].blue = b;
+}
+
+void setValueRGB(RGB RGBVal, int pos)
+{
+    leds[pos].red = RGBVal.r;
+    leds[pos].green = RGBVal.g;
+    leds[pos].blue = RGBVal.b;
+}
+
+RGB hsv2rgb(uint8_t hue, uint8_t sat, uint8_t val)
+{
+    double      hh, p, q, t, ff;
+    long        i;
+    RGB         out;
+
+    if(sat <= 0.0) {       // < is bogus, just shuts up warnings
+        out.r = val;
+        out.g = val;
+        out.b = val;
+        return out;
+    }
+    hh = hue;
+    if(hh >= 360.0) hh = 0.0;
+    hh /= 60.0;
+    i = (long)hh;
+    ff = hh - i;
+    p = val * (1.0 - sat);
+    q = val * (1.0 - (sat * ff));
+    t = val * (1.0 - (sat * (1.0 - ff)));
+
+    switch(i) {
+    case 0:
+        out.r = val;
+        out.g = t;
+        out.b = p;
+        break;
+    case 1:
+        out.r = q;
+        out.g = val;
+        out.b = p;
+        break;
+    case 2:
+        out.r = p;
+        out.g = val;
+        out.b = t;
+        break;
+
+    case 3:
+        out.r = p;
+        out.g = q;
+        out.b = val;
+        break;
+    case 4:
+        out.r = t;
+        out.g = p;
+        out.b = val;
+        break;
+    case 5:
+    default:
+        out.r = val;
+        out.g = p;
+        out.b = q;
+        break;
+    }
+    return out;     
 }
 
 int main()
