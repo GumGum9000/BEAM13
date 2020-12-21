@@ -2,7 +2,6 @@
 
 #include <avr/io.h>
 #include <util/delay.h>
-#include <stdbool.h>
 #include <stdlib.h>
 
 #define T1H 0.8
@@ -25,7 +24,7 @@ typedef struct
 
 RGB leds[NUMLeds];
 
-void LEDBit(bool Bit)
+void LEDBit(uint8_t Bit)
 {
     if (Bit)
     {
@@ -61,6 +60,13 @@ void drawLEDs()
         }
         for (int8_t i = 7; i >= 0; i--)
         {
+
+            (leds[j].red & 1 << i) ? LEDBit(1): LEDBit(0);
+
+
+                      LEDBit((leds[j].red & 1 << i));
+                      
+/*
             if (leds[j].red & 1 << i)
             {
                 LEDBit(1);
@@ -69,6 +75,7 @@ void drawLEDs()
             {
                 LEDBit(0);
             }
+  */
         }
         for (int8_t i = 7; i >= 0; i--)
         {
